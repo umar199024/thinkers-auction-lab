@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thinkers_ Auction Lab</title>
+    <meta name="description" content="Fan-made simulator for the Thinkers_ Uniswap V4 CCA mint on NFTX." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/lab.css" />
+  </head>
+  <body>
+    <div class="page" id="top">
+      <header class="nav glass" data-auto></header>
+      <main class="main">
+        <section class="hero">
+          <div class="hero__copy">
+            <p class="hero__eyebrow">Fan-made · not affiliated with NFTX or Thinkers_</p>
+            <h1>Thinkers_ Auction Lab</h1>
+            <p class="hero__sub">Simulate the Uniswap V4 CCA mint before Nov 24.</p>
+            <p class="hero__meta">3,333 Thinkers · Ink chain · Nov 24, 2026</p>
+          </div>
+        </section>
+
+        <section class="section" id="drop" data-nav="The drop">
+          <div class="head">
+            <p class="head__eyebrow">The drop in 20 seconds</p>
+            <h2>Stock-paired art that is also a token.</h2>
+            <p class="head__sub">Confirmed public facts.</p>
+          </div>
+          <div class="cards">
+            <div>
+              <h3>3,333 NFTs on Ink</h3>
+              <p>Stock-paired NFTs on Ink chain, by @ThinkersClub_, powered by @NFTX_ (built by Flayer Labs).</p>
+            </div>
+            <div>
+              <h3>Drops Nov 24, 2026</h3>
+              <p>NFTX Phase 1 whitelist: <strong>100 spots</strong>.</p>
+            </div>
+            <div>
+              <h3>1 NFT = 1 ERC20 token</h3>
+              <p>Swap between the art and the token any time. The NFT is for pfp, participation and earning; the token for instant trading on fomo, gmgn and more.</p>
+            </div>
+            <div>
+              <h3>Launch via Uniswap V4 CCA</h3>
+              <p>A Continuous Clearing Auction: on-chain price discovery, then liquidity is seeded into a Uniswap V4 pool.</p>
+            </div>
+            <div>
+              <h3>Paired with tokenized stocks</h3>
+              <p>Via xStocks. Priced like a stock, but you can pay in ETH or USDC.</p>
+            </div>
+            <div>
+              <h3>Still unknown</h3>
+              <p>
+                <span class="chip">Paired stock / ticker</span> <span class="chip">Price</span>
+                <span class="chip">Mint time</span> <span class="chip">Contract</span>
+                <span class="chip">Mint link</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="sim" data-nav="Simulator">
+          <div class="head">
+            <p class="head__eyebrow">Auction simulator</p>
+            <h2>Every block clears at one price for everyone.</h2>
+            <p class="head__sub">
+              In a CCA, supply is released block by block. Every bid states a budget and a max price, and is spread over the blocks left. Each block clears at ONE price for everyone: the price where demand meets that block's supply. If the price rises above your max, your bid stops filling.
+              <span class="chip x-model">Simplified educational model, not the official contract math</span>
+            </p>
+          </div>
+
+          <div class="x-lab">
+            <div class="x-panel x-area-bid">
+              <div>
+                <h3>Your bid</h3>
+                <p class="x-panel__sub">Spread evenly over the blocks left after you join.</p>
+              </div>
+              <div class="x-row2">
+                <label class="x-field">
+                  <span class="x-field__top">Budget (USD)</span>
+                  <input class="x-input" id="budget" type="number" inputmode="decimal" min="0" step="10" value="300" />
+                </label>
+                <label class="x-field">
+                  <span class="x-field__top">Max price</span>
+                  <input class="x-input" id="maxp" type="number" inputmode="decimal" min="0" step="1" value="120" />
+                </label>
+              </div>
+              <label class="x-field">
+                <span class="x-field__top">Entry block <output class="x-num" id="entry-out" for="entry">0</output></span>
+                <input class="x-range" id="entry" type="range" min="0" max="99" step="1" value="0" />
+                <small>Join late: slide right to enter mid-auction.</small>
+              </label>
+            </div>
+
+            <div class="x-area-out">
+              <div class="x-transport">
+                <button class="btn x-play" id="play" type="button">Play</button>
+                <button class="btn" id="step" type="button">Step</button>
+                <button class="btn" id="reset" type="button">Reset</button>
+                <select class="x-select" id="speed" aria-label="Speed">
+                  <option value="0.5">0.5×</option>
+                  <option value="1" selected>1×</option>
+                  <option value="2">2×</option>
+                  <option value="4">4×</option>
+                </select>
+                <span class="x-blockno">Block <span class="x-num" id="blockno">0 / 100</span></span>
+              </div>
+              <label class="x-scrub">
+                <span class="fineprint">Scrub through the auction</span>
+                <input class="x-range" id="scrub" type="range" min="0" max="100" step="1" value="0" aria-label="Block shown" />
+              </label>
+              <figure class="chart">
+                <figcaption class="chart__cap">Clearing price per block<small> · USD per Thinker; dashed line is your max, dot is where you were priced out</small></figcaption>
+                <div class="chart__canvas"><canvas id="price-chart" role="img" aria-label="Clearing price per block against your max price"></canvas></div>
+              </figure>
+              <section class="stats" aria-live="off">
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-price">$50.00</span></span><span class="stat__label">Current clearing price</span></div>
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-filled">0.00</span></span><span class="stat__label">Your Thinkers filled · whole NFTs: <span class="x-num" id="s-whole">0</span></span></div>
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-avg">—</span></span><span class="stat__label">Your average price paid</span></div>
+              </section>
+              <section class="stats">
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-spent">$0</span></span><span class="stat__label">USDC spent</span></div>
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-ref">$0</span></span><span class="stat__label">USDC refunded</span></div>
+                <div class="stat"><span class="stat__fig"><span class="x-num" id="s-sold">0%</span></span><span class="stat__label">Supply sold</span></div>
+              </section>
+              <aside class="callout x-summary" id="summary" aria-label="Result" aria-live="polite" hidden>
+                <p class="callout__head">Result</p>
+                <p class="callout__lead" id="sum-lead"></p>
+                <p class="fineprint" id="sum-tip"></p>
+              </aside>
+            </div>
+
+            <div class="x-panel x-area-set">
+              <div>
+                <h3>The auction</h3>
+              </div>
+              <label class="x-field">
+                <span class="x-field__top">Auction length <output class="x-num" id="blocks-out" for="blocks">100 blocks</output></span>
+                <input class="x-range" id="blocks" type="range" min="20" max="200" step="1" value="100" />
+              </label>
+              <div class="x-row2">
+                <label class="x-field">
+                  <span class="x-field__top">Supply sold</span>
+                  <input class="x-input" id="supply" type="number" inputmode="numeric" min="1" step="1" value="3333" />
+                </label>
+                <label class="x-field">
+                  <span class="x-field__top">Floor (USD)</span>
+                  <input class="x-input" id="floor" type="number" inputmode="decimal" min="0.01" step="1" value="50" />
+                </label>
+              </div>
+              <div>
+                <h3>The crowd</h3>
+                <p class="x-panel__sub">Seeded random, so the same crowd number gives the same result.</p>
+              </div>
+              <label class="x-field">
+                <span class="x-field__top">Other bidders <output class="x-num" id="crowd-out" for="crowd">1,000</output></span>
+                <input class="x-range" id="crowd" type="range" min="50" max="5000" step="50" value="1000" />
+              </label>
+              <label class="x-field">
+                <span class="x-field__top">Crowd style</span>
+                <select class="x-select" id="style">
+                  <option value="calm">Calm · budgets $50–300, max 1–2× floor</option>
+                  <option value="hyped">Hyped · budgets $100–1,000, max 1–5×</option>
+                  <option value="whales">Whales · a few huge budgets</option>
+                </select>
+              </label>
+              <div class="x-transport">
+                <button class="btn" id="reroll" type="button">Reroll crowd</button>
+                <span class="x-blockno">Crowd <span class="x-num" id="seed-out">#1</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cards">
+            <div>
+              <h3>Bid early</h3>
+              <p>Your budget spreads over more blocks.</p>
+            </div>
+            <div>
+              <h3>Your max price is your safety</h3>
+              <p>You never pay above it.</p>
+            </div>
+            <div>
+              <h3>Everyone pays the same price per block</h3>
+              <p>No gas war, no sniping.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="convert" data-nav="Converter">
+          <div class="head">
+            <p class="head__eyebrow">Art ↔ Token</p>
+            <h2>One Thinker is one token, either way round.</h2>
+            <p class="head__sub">Illustrative: token price is your own guess.</p>
+          </div>
+          <div class="x-conv">
+            <div>
+              <div class="x-toggle" role="group" aria-label="Show as">
+                <button type="button" id="t-nft" aria-pressed="true">NFT (art)</button>
+                <button type="button" id="t-tok" aria-pressed="false">1 ERC20 token</button>
+              </div>
+              <div class="x-flip" id="flip" aria-live="polite">
+                <div class="x-flip__inner">
+                  <div class="x-face" aria-hidden="false" id="face-front">
+                    <svg viewBox="0 0 200 160" role="img" aria-label="An abstract Thinker portrait">
+                      <rect x="0" y="0" width="200" height="160" rx="12" style="fill: var(--fill-primary-on)" />
+                      <circle cx="100" cy="70" r="38" style="fill: none; stroke: var(--text-primary); stroke-width: 3" />
+                      <path d="M70 66 q30 -36 60 0" style="fill: none; stroke: var(--text-primary); stroke-width: 3" />
+                      <circle cx="88" cy="74" r="3.5" style="fill: var(--text-primary)" />
+                      <circle cx="112" cy="74" r="3.5" style="fill: var(--text-primary)" />
+                      <path d="M92 90 h16" style="stroke: var(--text-primary); stroke-width: 3; stroke-linecap: round" />
+                      <path d="M62 150 q38 -50 76 0" style="fill: none; stroke: var(--text-primary); stroke-width: 3" />
+                      <path d="M138 52 l8 -8 M146 60 l10 -2 M140 40 l2 -10" style="stroke: var(--fill-system-orange); stroke-width: 3; stroke-linecap: round" />
+                    </svg>
+                    <p class="x-face__label"><span>NFT (art)</span><span>pfp · participation · earning</span></p>
+                  </div>
+                  <div class="x-face x-face--back" aria-hidden="true" id="face-back">
+                    <svg viewBox="0 0 200 160" role="img" aria-label="A token coin">
+                      <rect x="0" y="0" width="200" height="160" rx="12" style="fill: var(--fill-primary-on)" />
+                      <circle cx="100" cy="80" r="52" style="fill: var(--fill-primary)" />
+                      <circle cx="100" cy="80" r="42" style="fill: none; stroke: var(--text-primary-on); stroke-width: 2; stroke-dasharray: 4 5" />
+                      <text x="100" y="90" text-anchor="middle" style="fill: var(--text-primary-on); font: 500 28px 'Geist Mono', monospace">1.0</text>
+                    </svg>
+                    <p class="x-face__label"><span>1 ERC20 token</span><span>trade on fomo, gmgn</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="x-panel x-out">
+              <div class="x-row2">
+                <label class="x-field">
+                  <span class="x-field__top">How many you hold</span>
+                  <input class="x-input" id="hold" type="number" inputmode="numeric" min="0" step="1" value="3" />
+                </label>
+                <label class="x-field">
+                  <span class="x-field__top">Token price (USD)</span>
+                  <input class="x-input" id="tprice" type="number" inputmode="decimal" min="0" step="1" value="120" />
+                </label>
+              </div>
+              <p class="x-big" id="conv-out"></p>
+              <label class="x-field">
+                <span class="x-field__top">Fractional tokens</span>
+                <input class="x-input" id="frac" type="number" inputmode="decimal" min="0" step="0.1" value="2.4" />
+              </label>
+              <p class="x-big" id="frac-out"></p>
+              <p class="fineprint">Illustrative only. Only whole tokens unwrap into an NFT; the rest stays a token.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="whatif" data-nav="What-if">
+          <div class="head">
+            <p class="head__eyebrow">What-if (paired stock not announced)</p>
+            <h2>If a Thinker is priced like a stock, it moves like one.</h2>
+            <p class="head__sub">Hypothetical: assumes the NFT tracks its paired stock.</p>
+          </div>
+          <div class="pair">
+            <div class="x-panel">
+              <div class="x-row2">
+                <label class="x-field">
+                  <span class="x-field__top">Stock price (USD)</span>
+                  <input class="x-input" id="stock" type="number" inputmode="decimal" min="0" step="1" value="200" />
+                </label>
+                <label class="x-field">
+                  <span class="x-field__top">Shares per NFT</span>
+                  <input class="x-input" id="ratio" type="number" inputmode="decimal" min="0" step="0.1" value="1" />
+                </label>
+              </div>
+              <label class="x-field">
+                <span class="x-field__top">Stock move <output class="x-num" id="move-out" for="move">+10%</output></span>
+                <input class="x-range" id="move" type="range" min="-50" max="50" step="1" value="10" />
+              </label>
+            </div>
+            <div class="breakdown">
+              <dl>
+                <div class="row"><dt>NFT value before</dt><dd class="x-num" id="w-before"></dd></div>
+                <div class="row"><dt>Change</dt><dd class="x-num" id="w-change"></dd></div>
+                <div class="row row--total"><dt>NFT value after</dt><dd class="x-num" id="w-after"></dd></div>
+              </dl>
+              <p class="fineprint">Hypothetical. The paired stock, ratio and pricing have not been announced.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <p>Made by a Thinkers fan · <a class="link" href="https://x.com/AzrarM" target="_blank" rel="noopener">@AzrarM</a></p>
+        <div class="links">
+          <a class="btn" id="share" href="https://x.com/intent/tweet" target="_blank" rel="noopener">Share on X</a>
+          <a class="btn" href="https://nftx.io/thinkers" target="_blank" rel="noopener">Thinkers_ waitlist</a>
+          <a class="btn" href="https://x.com/ThinkersClub_" target="_blank" rel="noopener">@ThinkersClub_</a>
+          <a class="btn" href="https://x.com/NFTX_" target="_blank" rel="noopener">@NFTX_</a>
+        </div>
+        <p class="fineprint">Educational simulation. Not financial advice. Check official NFTX channels for real mint details.</p>
+        <nav aria-label="Back to sections" data-auto></nav>
+      </footer>
+    </div>
+    <script src="js/ui.js"></script>
+    <script src="vendor/chart.umd.min.js"></script>
+    <script src="vendor/chartjs-plugin-datalabels.min.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
