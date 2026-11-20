@@ -1,0 +1,65 @@
+.x-num { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+      .x-model { display: inline-block; margin-top: 4px; }
+
+      /* the lab: controls and output */
+      .x-lab { display: grid; gap: 16px; grid-template-areas: "bid" "out" "set"; }
+      .x-lab > * { min-width: 0; }
+      .x-area-bid { grid-area: bid; }
+      .x-area-out { grid-area: out; display: grid; gap: 16px; align-content: start; }
+      .x-area-set { grid-area: set; }
+      @media (min-width: 900px) {
+        .x-lab { grid-template-columns: 320px minmax(0, 1fr); grid-template-areas: "bid out" "set out"; align-items: start; }
+      }
+      .x-panel { padding: 20px; border-radius: var(--r-m); background: var(--fill-tertiary); display: grid; gap: 16px; }
+      .x-panel h3 { font: var(--type-heading); }
+      .x-panel__sub { font: var(--type-label); color: var(--text-secondary); margin-top: 4px; }
+      .x-field { display: grid; gap: 6px; }
+      .x-field__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: var(--type-label); }
+      .x-field__top output { font-size: var(--size-small); }
+      .x-field small { font: var(--type-caption); color: var(--text-secondary); }
+      .x-input, .x-select {
+        width: 100%; min-height: var(--tap); padding: 8px 12px;
+        border: 1px solid var(--stroke-primary); border-radius: var(--r-s);
+        background: var(--fill-primary-on); color: var(--text-primary);
+        font: var(--type-body);
+      }
+      .x-input { font-family: "Geist Mono", ui-monospace, Menlo, monospace; }
+      .x-input:focus-visible, .x-select:focus-visible, .x-range:focus-visible { outline: 2px solid var(--fill-primary); outline-offset: 2px; }
+      .x-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .x-range { width: 100%; height: var(--tap); margin: 0; accent-color: var(--fill-primary); background: transparent; }
+
+      /* transport */
+      .x-transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .x-transport .btn { min-height: var(--tap); padding-inline: 14px; cursor: pointer; }
+      .x-transport .x-play { background: var(--fill-primary); color: var(--text-primary-on); border-color: var(--fill-primary); min-width: 88px; justify-content: center; }
+      .x-transport .x-select { width: auto; min-height: var(--tap); padding-block: 4px; }
+      .x-blockno { margin-left: auto; font: var(--type-label); color: var(--text-secondary); }
+      .x-scrub { display: grid; gap: 2px; }
+
+      /* summary */
+      .x-summary[hidden] { display: none; }
+
+      /* art and token flip card */
+      .x-conv { display: grid; gap: 16px; }
+      @media (min-width: 760px) { .x-conv { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); align-items: start; } }
+      .x-toggle { display: inline-flex; padding: 3px; border-radius: var(--r-pill); background: var(--fill-tertiary); gap: 2px; }
+      .x-toggle button {
+        min-height: var(--tap); padding: 0 16px; border: 0; border-radius: var(--r-pill); background: transparent;
+        color: var(--text-secondary); font: var(--type-tag); cursor: pointer;
+      }
+      .x-toggle button[aria-pressed="true"] { background: var(--fill-primary); color: var(--text-primary-on); }
+      .x-flip { perspective: 1000px; margin-top: 12px; cursor: pointer; }
+      .x-flip__inner { position: relative; height: 260px; transform-style: preserve-3d; transition: transform 700ms var(--ease-out); }
+      .x-flip.is-flipped .x-flip__inner { transform: rotateY(180deg); }
+      .x-face {
+        position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        border-radius: var(--r-m); border: 1px solid var(--stroke-primary); background: var(--fill-tertiary);
+        display: grid; grid-template-rows: 1fr auto; padding: 16px; gap: 8px;
+      }
+      .x-face--back { transform: rotateY(180deg); }
+      .x-face svg { width: 100%; height: 100%; max-height: 180px; }
+      .x-face__label { display: flex; justify-content: space-between; font: var(--type-label); }
+      .x-face__label span:last-child { color: var(--text-secondary); }
+      @media (prefers-reduced-motion: reduce) { .x-flip__inner { transition: none; } }
+      .x-big { font: var(--type-heading); text-wrap: balance; }
+      .x-out { display: grid; gap: 16px; }
